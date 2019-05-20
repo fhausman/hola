@@ -18,13 +18,13 @@ class vec : public std::array<std::common_type_t<T...>, sizeof...(T)>
 public:
     constexpr static auto size = sizeof...(T);
 
-    constexpr bool operator==(vec<T...> const& o)
+    constexpr bool operator==(vec<T...> const& o) const
     {
         return equals(o, std::make_index_sequence<size>{});
     }
 private:
     template<size_t ... I>
-    constexpr bool equals(vec<T...> const& o, std::index_sequence<I...>)
+    constexpr bool equals(vec<T...> const& o, std::index_sequence<I...>) const
     {
         return ((std::get<I>(*this) == std::get<I>(o)) && ...);
     }
