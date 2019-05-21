@@ -22,7 +22,12 @@ class vec : public std::array<T, Size>
     {
         return equals(o, std::make_index_sequence<size>{});
     }
-
+    
+    constexpr bool operator!=(vec<T, Size> const& o) const
+    {
+        return !equals(o, std::make_index_sequence<size>{});
+    }
+    
    private:
     template <size_t... I>
     constexpr bool equals(vec<T, Size> const& o, std::index_sequence<I...>) const
