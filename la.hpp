@@ -1,4 +1,5 @@
 #include <type_traits>
+#include <tuple>
 #include <array>
 
 namespace la
@@ -22,18 +23,29 @@ class vec : public std::array<T, Size>
     {
         return equals(o, std::make_index_sequence<size>{});
     }
-    
+
     constexpr bool operator!=(vec<T, Size> const& o) const
     {
         return !equals(o, std::make_index_sequence<size>{});
     }
-    
+
+    template<typename MultT, typename = std::enable_if_t<std::is_integral_v<MultT> || std::is_floating_point_v<MultT>>>
+    constexpr auto operator*(const MultT mult) const
+    {
+        return std::apply(
+            [&](const auto& ... a)
+                { return vec<typename std::common_type<decltype(mult*a)...>::type, Size>{mult*a...};},
+            get());
+    }
+
    private:
     template <size_t... I>
     constexpr bool equals(vec<T, Size> const& o, std::index_sequence<I...>) const
     {
         return ((std::get<I>(*this) == std::get<I>(o)) && ...);
     }
+
+    constexpr const std::array<T, Size>& get() const { return *this; }
 };
 
 template <typename... T>
