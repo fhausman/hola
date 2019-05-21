@@ -30,10 +30,10 @@ class vec : public std::array<T, Size>
     }
 
     template<typename MultT, typename = std::enable_if_t<std::is_integral_v<MultT> || std::is_floating_point_v<MultT>>>
-    constexpr auto operator*(const MultT mult) const
+    constexpr auto operator*(MultT const mult) const
     {
         return std::apply(
-            [&](const auto& ... a)
+            [&](auto const& ... a)
                 { return vec<typename std::common_type<decltype(mult*a)...>::type, Size>{mult*a...};},
             get());
     }
