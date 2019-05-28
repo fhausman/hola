@@ -1,6 +1,6 @@
-#include "../la.hpp"
+#include "../hola.hpp"
 
-using namespace la;
+using namespace hola;
 
 int main()
 {
