@@ -4,7 +4,7 @@
 #include <tuple>
 #include <array>
 
-namespace la
+namespace hola
 {
 namespace internal
 {
@@ -85,8 +85,10 @@ constexpr auto dot(Vec const& a, Vec const& b)
 template <typename Vec>
 constexpr auto cross(Vec const& a, Vec const& b)
 {
-    return Vec{y(a) * z(b) - z(a) * y(b),
+    return Vec{
+        y(a) * z(b) - z(a) * y(b),
         z(a) * x(b) - x(a) * z(b),
-        x(a) * y(b) - y(a) * x(b)};
+        x(a) * y(b) - y(a) * x(b)
+    };
 }
-}  // namespace la
+}  // namespace hola
