@@ -31,7 +31,7 @@ class vec : public std::array<T, Size>
         return !equals(o, std::make_index_sequence<size>{});
     }
 
-    template<typename MultT, typename = std::enable_if_t<std::is_integral_v<MultT> || std::is_floating_point_v<MultT>>>
+    template<typename MultT>
     constexpr auto operator*(MultT const mult) const
     {
         return std::apply(
