@@ -23,12 +23,12 @@ class vec : public std::array<T, Size>
 
     constexpr bool operator==(vec<T, Size> const& o) const
     {
-        return equals(o, std::make_index_sequence<size>{});
+        return equals(o, std::make_index_sequence<SIZE>{});
     }
 
     constexpr bool operator!=(vec<T, Size> const& o) const
     {
-        return !equals(o, std::make_index_sequence<size>{});
+        return !equals(o, std::make_index_sequence<SIZE>{});
     }
 
     template<typename MultT>
