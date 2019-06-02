@@ -59,21 +59,39 @@ using vec2f = vec<float, 2>;
 using vec3f = vec<float, 3>;
 
 template <typename Vec>
-constexpr auto x(Vec const& v)
+constexpr auto get_x(Vec const& v)
 {
     return std::get<0>(v);
 }
 
 template <typename Vec>
-constexpr auto y(Vec const& v)
+constexpr auto get_y(Vec const& v)
 {
     return std::get<1>(v);
 }
 
 template <typename Vec>
-constexpr auto z(Vec const& v)
+constexpr auto get_z(Vec const& v)
 {
     return std::get<2>(v);
+}
+
+template <typename Vec>
+void set_x(Vec& v, decltype(get_x(v)) const& value)
+{
+    std::get<0>(v) = value;
+}
+
+template <typename Vec>
+void set_y(Vec& v, decltype(get_y(v)) const& value)
+{
+    std::get<1>(v) = value;
+}
+
+template <typename Vec>
+void set_z(Vec& v, decltype(get_z(v)) const& value)
+{
+    std::get<2>(v) = value;
 }
 
 template <typename Vec>
@@ -86,9 +104,9 @@ template <typename Vec>
 constexpr auto cross(Vec const& a, Vec const& b)
 {
     return Vec{
-        y(a) * z(b) - z(a) * y(b),
-        z(a) * x(b) - x(a) * z(b),
-        x(a) * y(b) - y(a) * x(b)
+        get_y(a) * get_z(b) - get_z(a) * get_y(b),
+        get_z(a) * get_x(b) - get_x(a) * get_z(b),
+        get_x(a) * get_y(b) - get_y(a) * get_x(b)
     };
 }
 }  // namespace hola
