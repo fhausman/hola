@@ -19,7 +19,7 @@ template <typename T, size_t Size>
 class vec : public std::array<T, Size>
 {
    public:
-    constexpr static auto size = Size;
+    constexpr static auto SIZE = Size;
 
     constexpr bool operator==(vec<T, Size> const& o) const
     {
@@ -53,10 +53,10 @@ class vec : public std::array<T, Size>
 template <typename... T>
 vec(T&&...)->vec<typename std::common_type<T...>::type, sizeof...(T)>;
 
-using vec2i = vec<int, 2>;
-using vec3i = vec<int, 3>;
-using vec2f = vec<float, 2>;
-using vec3f = vec<float, 3>;
+using vec2i = vec<int32_t, 2>;
+using vec3i = vec<int32_t, 3>;
+using vec2f = vec<float_t, 2>;
+using vec3f = vec<float_t, 3>;
 
 template <typename Vec>
 constexpr auto get_x(Vec const& v)
@@ -97,7 +97,7 @@ void set_z(Vec& v, decltype(get_z(v)) const& value)
 template <typename Vec>
 constexpr auto dot(Vec const& a, Vec const& b)
 {
-    return internal::dot_impl(a, b, std::make_index_sequence<Vec::size>{});
+    return internal::dot_impl(a, b, std::make_index_sequence<Vec::SIZE>{});
 }
 
 template <typename Vec>
