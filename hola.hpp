@@ -41,7 +41,7 @@ class vec : public std::array<T, Size>
     }
 
     template <typename MultT>
-    constexpr auto operator*(MultT const mult) const
+    constexpr auto operator*(MultT const& mult) const
     {
         return std::apply(
             [&](auto const&... a) {
