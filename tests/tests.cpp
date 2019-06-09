@@ -26,3 +26,9 @@ static_assert((a == b) == false);
 static_assert((a != b) == true);
 static_assert(dot(a, b) == 26);
 static_assert(cross(a, b) == vec{ -2, 4, -2 });
+
+constexpr auto c = convert_to<vec3f>(a);
+static_assert(std::is_same_v<float, decltype(c)::Type>);
+static_assert(get_x(c) == 1.f);
+static_assert(get_y(c) == 2.f);
+static_assert(get_z(c) == 3.f);
