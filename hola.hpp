@@ -3,6 +3,7 @@
 #include <type_traits>
 #include <tuple>
 #include <array>
+#include <math.h>
 
 namespace hola
 {
@@ -13,12 +14,20 @@ constexpr auto dot_impl(Vec const& a, Vec const& b, std::index_sequence<I...>)
 {
     return ((std::get<I>(a) * std::get<I>(b)) + ...);
 }
+
+template <typename VecTo, typename VecFrom, size_t... I>
+constexpr VecTo convert_to_impl(VecFrom const& from, std::index_sequence<I...>)
+{
+    return VecTo{static_cast<typename VecTo::Type>(std::get<I>(from))...};
+}
 }  // namespace internal
 
 template <typename T, size_t Size>
 class vec : public std::array<T, Size>
 {
    public:
+    using Type = T;
+
     constexpr static auto SIZE = Size;
 
     constexpr bool operator==(vec<T, Size> const& o) const
@@ -31,18 +40,22 @@ class vec : public std::array<T, Size>
         return !equals(o, std::make_index_sequence<SIZE>{});
     }
 
-    template<typename MultT>
+    template <typename MultT>
     constexpr auto operator*(MultT const mult) const
     {
         return std::apply(
-            [&](auto const& ... a)
-                { return vec<typename std::common_type<decltype(mult*a)...>::type, Size>{mult*a...};},
+            [&](auto const&... a) {
+                return vec<
+                    typename std::common_type<decltype(mult * a)...>::type,
+                    Size>{mult * a...};
+            },
             get());
     }
 
    private:
     template <size_t... I>
-    constexpr bool equals(vec<T, Size> const& o, std::index_sequence<I...>) const
+    constexpr bool equals(
+        vec<T, Size> const& o, std::index_sequence<I...>) const
     {
         return ((std::get<I>(*this) == std::get<I>(o)) && ...);
     }
@@ -94,6 +107,13 @@ void set_z(Vec& v, decltype(get_z(v)) const& value)
     std::get<2>(v) = value;
 }
 
+template <typename VecTo, typename VecFrom>
+constexpr VecTo convert_to(const VecFrom& from)
+{
+    return internal::convert_to_impl<VecTo>(
+        from, std::make_index_sequence<VecFrom::SIZE>{});
+}
+
 template <typename Vec>
 constexpr auto dot(Vec const& a, Vec const& b)
 {
@@ -103,10 +123,8 @@ constexpr auto dot(Vec const& a, Vec const& b)
 template <typename Vec>
 constexpr auto cross(Vec const& a, Vec const& b)
 {
-    return Vec{
-        get_y(a) * get_z(b) - get_z(a) * get_y(b),
+    return Vec{get_y(a) * get_z(b) - get_z(a) * get_y(b),
         get_z(a) * get_x(b) - get_x(a) * get_z(b),
-        get_x(a) * get_y(b) - get_y(a) * get_x(b)
-    };
+        get_x(a) * get_y(b) - get_y(a) * get_x(b)};
 }
 }  // namespace hola
