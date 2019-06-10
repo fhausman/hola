@@ -27,6 +27,7 @@ static_assert((a != b) == true);
 static_assert(dot(a, b) == 26);
 static_assert(cross(a, b) == vec{ -2, 4, -2 });
 static_assert(a + b == vec{ 4,6,8 });
+static_assert(a - b == vec{ -2,-2,-2 });
 
 constexpr auto c = convert_to<vec3f>(a);
 static_assert(std::is_same_v<float, decltype(c)::Type>);
