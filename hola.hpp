@@ -10,7 +10,7 @@ namespace hola
 namespace internal
 {
 template <typename Vec, size_t... I>
-constexpr auto dot_impl(Vec const& a, Vec const& b, std::index_sequence<I...>)
+constexpr typename Vec::held_type dot_impl(Vec const& a, Vec const& b, std::index_sequence<I...>)
 {
     return ((std::get<I>(a) * std::get<I>(b)) + ...);
 }
@@ -18,17 +18,17 @@ constexpr auto dot_impl(Vec const& a, Vec const& b, std::index_sequence<I...>)
 template <typename VecTo, typename VecFrom, size_t... I>
 constexpr VecTo convert_to_impl(VecFrom const& from, std::index_sequence<I...>)
 {
-    return VecTo{static_cast<typename VecTo::Type>(std::get<I>(from))...};
+    return VecTo{static_cast<typename VecTo::held_type>(std::get<I>(from))...};
 }
 
 template <typename Vec, size_t... I>
-constexpr auto add_impl(Vec const& a, Vec const& b, std::index_sequence<I...>)
+constexpr Vec add_impl(Vec const& a, Vec const& b, std::index_sequence<I...>)
 {
     return Vec{std::get<I>(a) + std::get<I>(b)...};
 }
 
 template <typename Vec, size_t... I>
-constexpr auto sub_impl(Vec const& a, Vec const& b, std::index_sequence<I...>)
+constexpr Vec sub_impl(Vec const& a, Vec const& b, std::index_sequence<I...>)
 {
     return Vec{ std::get<I>(a) - std::get<I>(b)... };
 }
@@ -44,28 +44,28 @@ template <typename T, size_t Size>
 class vec : public std::array<T, Size>
 {
    public:
-    using Type = T;
+    using held_type = T;
 
-    constexpr static auto SIZE = Size;
+    constexpr static size_t size = Size;
 
     constexpr bool operator==(vec<T, Size> const& o) const
     {
-        return internal::equals_impl(*this, o, std::make_index_sequence<SIZE>{});
+        return internal::equals_impl(*this, o, std::make_index_sequence<Size>{});
     }
 
     constexpr bool operator!=(vec<T, Size> const& o) const
     {
-        return !internal::equals_impl(*this, o, std::make_index_sequence<SIZE>{});
+        return !internal::equals_impl(*this, o, std::make_index_sequence<Size>{});
     }
 
-    constexpr auto operator+(vec<T, Size> const& o) const
+    constexpr vec<T, Size> operator+(vec<T, Size> const& o) const
     {
-        return internal::add_impl(*this, o, std::make_index_sequence<SIZE>{});
+        return internal::add_impl(*this, o, std::make_index_sequence<Size>{});
     }
 
-    constexpr auto operator-(vec<T, Size> const& o) const
+    constexpr vec<T, Size> operator-(vec<T, Size> const& o) const
     {
-        return internal::sub_impl(*this, o, std::make_index_sequence<SIZE>{});
+        return internal::sub_impl(*this, o, std::make_index_sequence<Size>{});
     }
 
     template <typename MultT>
@@ -111,19 +111,19 @@ constexpr auto get_z(Vec const& v)
 }
 
 template <typename Vec>
-void set_x(Vec& v, decltype(get_x(v)) const& value)
+void set_x(Vec& v, typename Vec::held_type const& value)
 {
     std::get<0>(v) = value;
 }
 
 template <typename Vec>
-void set_y(Vec& v, decltype(get_y(v)) const& value)
+void set_y(Vec& v, typename Vec::held_type const& value)
 {
     std::get<1>(v) = value;
 }
 
 template <typename Vec>
-void set_z(Vec& v, decltype(get_z(v)) const& value)
+void set_z(Vec& v, typename Vec::held_type const& value)
 {
     std::get<2>(v) = value;
 }
@@ -132,13 +132,13 @@ template <typename VecTo, typename VecFrom>
 constexpr VecTo convert_to(const VecFrom& from)
 {
     return internal::convert_to_impl<VecTo>(
-        from, std::make_index_sequence<VecFrom::SIZE>{});
+        from, std::make_index_sequence<VecFrom::size>{});
 }
 
 template <typename Vec>
 constexpr auto dot(Vec const& a, Vec const& b)
 {
-    return internal::dot_impl(a, b, std::make_index_sequence<Vec::SIZE>{});
+    return internal::dot_impl(a, b, std::make_index_sequence<Vec::size>{});
 }
 
 template <typename Vec>
