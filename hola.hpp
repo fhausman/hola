@@ -32,6 +32,12 @@ constexpr auto sub_impl(Vec const& a, Vec const& b, std::index_sequence<I...>)
 {
     return Vec{ std::get<I>(a) - std::get<I>(b)... };
 }
+
+template <typename Vec, size_t... I>
+constexpr bool equals_impl(Vec const& a, Vec const& b, std::index_sequence<I...>)
+{
+    return ((std::get<I>(a) == std::get<I>(b)) && ...);
+}
 }  // namespace internal
 
 template <typename T, size_t Size>
@@ -44,12 +50,12 @@ class vec : public std::array<T, Size>
 
     constexpr bool operator==(vec<T, Size> const& o) const
     {
-        return equals(o, std::make_index_sequence<SIZE>{});
+        return internal::equals_impl(*this, o, std::make_index_sequence<SIZE>{});
     }
 
     constexpr bool operator!=(vec<T, Size> const& o) const
     {
-        return !equals(o, std::make_index_sequence<SIZE>{});
+        return !internal::equals_impl(*this, o, std::make_index_sequence<SIZE>{});
     }
 
     constexpr auto operator+(vec<T, Size> const& o) const
@@ -75,13 +81,6 @@ class vec : public std::array<T, Size>
     }
 
    private:
-    template <size_t... I>
-    constexpr bool equals(
-        vec<T, Size> const& o, std::index_sequence<I...>) const
-    {
-        return ((std::get<I>(*this) == std::get<I>(o)) && ...);
-    }
-
     constexpr const std::array<T, Size>& get() const { return *this; }
 };
 
