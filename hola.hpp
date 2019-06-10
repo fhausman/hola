@@ -20,6 +20,12 @@ constexpr VecTo convert_to_impl(VecFrom const& from, std::index_sequence<I...>)
 {
     return VecTo{static_cast<typename VecTo::Type>(std::get<I>(from))...};
 }
+
+template <typename Vec, size_t... I>
+constexpr auto add_impl(Vec const& a, Vec const& b, std::index_sequence<I...>)
+{
+    return Vec{std::get<I>(a) + std::get<I>(b)...};
+}
 }  // namespace internal
 
 template <typename T, size_t Size>
@@ -38,6 +44,11 @@ class vec : public std::array<T, Size>
     constexpr bool operator!=(vec<T, Size> const& o) const
     {
         return !equals(o, std::make_index_sequence<SIZE>{});
+    }
+
+    constexpr auto operator+(vec<T, Size> const o) const
+    {
+        return internal::add_impl(*this, o, std::make_index_sequence<SIZE>{});
     }
 
     template <typename MultT>
