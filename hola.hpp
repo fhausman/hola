@@ -80,6 +80,16 @@ class vec : public std::array<T, Size>
             get());
     }
 
+    //TODO: make it constexpr
+    T norm() const
+    {
+        return std::sqrt(std::apply(
+            [&](auto const&... a) {
+            return ((a*a) + ...);
+        },
+            get()));
+    }
+
    private:
     constexpr const std::array<T, Size>& get() const { return *this; }
 };
@@ -147,5 +157,11 @@ constexpr auto cross(Vec const& a, Vec const& b)
     return Vec{get_y(a) * get_z(b) - get_z(a) * get_y(b),
         get_z(a) * get_x(b) - get_x(a) * get_z(b),
         get_x(a) * get_y(b) - get_y(a) * get_x(b)};
+}
+
+template <typename Vec>
+auto normalize(Vec const& v)
+{
+    return v * (1 / v.norm());
 }
 }  // namespace hola
